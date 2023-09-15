@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { signOut, signIn } from "next-auth/react";
 
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import MessageIcon from "@mui/icons-material/Message";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -15,7 +15,12 @@ function NavBar() {
 
   const pathname = usePathname();
 
-  const { data: session } = useSession();
+  const { data: session } = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect(`/api/auth/signin?callbackUrl=${pathname}`);
+    },
+  });
   console.log(session);
 
   return (
